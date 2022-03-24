@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -62,11 +61,9 @@ public class BidListController {
             model.addAttribute("bidList", bidList);
             return "bidList/update";
         } else {
-           // redirectAttributes.addFlashAttribute("error", "Invalid BidList ID");
-            //return "redirect:/bidList/list";
-            throw new EntityNotFoundException("BidList not found");
+            redirectAttributes.addFlashAttribute("error", "Invalid BidList ID");
+            return "redirect:/bidList/list";
         }
-
     }
 
 
@@ -89,11 +86,12 @@ public class BidListController {
     }
 
     @GetMapping("/bidList/delete/{id}")
-    public String deleteBid(@PathVariable("id") Integer id, Model model) {
+    public String deleteBid(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
         BidList bidList = bidListService.getBidListById(id);
 
         if(bidList != null) {
             bidListService.deleteBidList(bidList);
+            redirectAttributes.addFlashAttribute("success", "BidList successfully deleted");
         }
         return "redirect:/bidList/list";
     }

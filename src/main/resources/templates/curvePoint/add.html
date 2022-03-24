@@ -9,16 +9,37 @@
 <body>
 <div class="container">
 
-	<div class="row">
+	<div class="row my-4">
 		<h2>Add New Curve Point</h2>
 	</div>
 
-	<div class="row">
+	<div class="row w-50">
 		<form action="#" th:action="@{/curvePoint/validate}" th:object="${curvePoint}" method="post" class="form-horizontal" style="width: 100%">
-			<!--
-			TODO: Create a form to input the values of CurvePoint, there are 2 buttons: Save data and Cancel to the list CurvePoint
-			 -->
-
+			<div class="col mb-3">
+				<label for="curve-id">
+					Curve Id
+				</label>
+				<input class="form-control" type="text" name="curve-id" id="curve-id" th:field="*{curveId}"/>
+				<div class="text-danger p-1" th:if="${#fields.hasErrors('curveId')}" th:text="${error}" th:errors="*{curveId}"></div>
+			</div>
+			<div class="col mb-3">
+				<label for="term">
+					Term
+				</label>
+				<input class="form-control" type="text" name="term" id="term" th:field="*{term}"/>
+				<div class="text-danger p-1" th:if="${#fields.hasErrors('term')}" th:text="${error}" th:errors="*{term}"></div>
+			</div>
+			<div class="col mb-3">
+				<label for="value">
+					Value
+				</label>
+				<input class="form-control" type="text" name="value" id="value" th:field="*{value}"/>
+				<div class="text-danger p-1" th:if="${#fields.hasErrors('value')}" th:text="${error}" th:errors="*{value}"></div>
+			</div>
+			<div class="col mb-3">
+				<button type="submit" class="btn btn-primary">Add Curve Point</button>
+				<a th:href="@{/curvePoint/list}" class="btn btn-danger">Cancel</a>
+			</div>
 		</form>
 	</div>
 
