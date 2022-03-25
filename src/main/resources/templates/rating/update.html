@@ -9,15 +9,44 @@
 <body>
 <div class="container">
 
-	<div class="row">
+	<div class="row my-4">
 		<h2>Update Rating</h2>
 	</div>
 
-	<div class="row">
+	<div class="row w-50">
 		<form action="#" th:action="@{/rating/update/{id}(id=${rating.id})}" th:object="${rating}" method="post" class="form-horizontal" style="width: 100%">
-			<!--
-			TODO: Create a form to edit the values of Rating, there are 2 buttons: Update data and Cancel to the Rating
-			 -->
+			<div class="col mb-3">
+				<label for="moodys-rating">
+					Moodys Rating
+				</label>
+				<input class="form-control" type="text" name="moodys-rating" id="moodys-rating" th:field="*{moodysRating}"/>
+				<div class="text-danger p-1" th:if="${#fields.hasErrors('moodysRating')}" th:text="${error}" th:errors="*{moodysRating}"></div>
+			</div>
+			<div class="col mb-3">
+				<label for="sand-rating">
+					Sand Rating
+				</label>
+				<input class="form-control" type="text" name="sand-rating" id="sand-rating" th:field="*{sandPRating}"/>
+				<div class="text-danger p-1" th:if="${#fields.hasErrors('sandPRating')}" th:text="${error}" th:errors="*{sandPRating}"></div>
+			</div>
+			<div class="col mb-3">
+				<label for="fitch-rating">
+					Fitch Rating
+				</label>
+				<input class="form-control" type="text" name="fitch-rating" id="fitch-rating" th:field="*{fitchRating}"/>
+				<div class="text-danger p-1" th:if="${#fields.hasErrors('fitchRating')}" th:text="${error}" th:errors="*{fitchRating}"></div>
+			</div>
+			<div class="col mb-3">
+				<label for="order">
+					Order
+				</label>
+				<input class="form-control" type="text" name="order" id="order" th:field="*{orderNumber}"/>
+				<div class="text-danger p-1" th:if="${#fields.hasErrors('orderNumber')}" th:text="${error}" th:errors="*{orderNumber}"></div>
+			</div>
+			<div class="col mb-3">
+				<button type="submit" class="btn btn-primary">Update Rating</button>
+				<a th:href="@{/rating/list}" class="btn btn-danger">Cancel</a>
+			</div>
 		</form>
 	</div>
 

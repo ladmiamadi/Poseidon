@@ -21,7 +21,7 @@ public class CurvePoint {
 
     @Column(name = "curveId")
     @Min(value = 1, message = "Curve Id must be greater than 0")
-    @NotNull(message = "Must not be null")
+    @NotNull(message = "Curve Id is mandatory")
     private Integer curveId;
 
     @Column(name = "asOfDate")
@@ -29,12 +29,12 @@ public class CurvePoint {
 
     @Column(name = "term")
     @Min(value = 1, message = "Term must be greater than 0")
-    @NotNull(message = "Must not be null")
+    @NotNull(message = "Term is mandatory")
     private Double term;
 
     @Column(name = "value")
     @Min(value = 1, message = "Value must be greater than 0")
-    @NotNull(message = "Must not be null")
+    @NotNull(message = "Value is mandatory")
     private Double value;
 
     @Column(name = "creationDate")
