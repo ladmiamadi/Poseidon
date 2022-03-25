@@ -1,5 +1,6 @@
 package com.nnk.springboot.controllers;
 
+import com.nnk.springboot.domain.Rating;
 import com.nnk.springboot.domain.RuleName;
 import com.nnk.springboot.services.RuleNameService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 
@@ -34,27 +36,51 @@ public class RuleNameController {
     }
 
     @PostMapping("/ruleName/validate")
-    public String validate(@Valid RuleName ruleName, BindingResult result, Model model) {
-        // TODO: check data valid and save to db, after saving return RuleName list
+    public String validate(@Valid RuleName ruleName, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
+        if(result.hasErrors()) {
+            model.addAttribute("ruleName", ruleName);
+        } else {
+            ruleNameService.createNewRuleName(ruleName);
+            redirectAttributes.addFlashAttribute("success", "Rule successfully added");
+
+            return "redirect:/ruleName/list";
+        }
         return "ruleName/add";
     }
 
     @GetMapping("/ruleName/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
-        // TODO: get RuleName by Id and to model then show to the form
+        RuleName ruleName = ruleNameService.getRuleNameById(id);
+
+        model.addAttribute("ruleName", ruleName);
         return "ruleName/update";
     }
 
     @PostMapping("/ruleName/update/{id}")
     public String updateRuleName(@PathVariable("id") Integer id, @Valid RuleName ruleName,
-                             BindingResult result, Model model) {
-        // TODO: check required fields, if valid call service to update RuleName and return RuleName list
-        return "redirect:/ruleName/list";
+                             BindingResult result, Model model, RedirectAttributes redirectAttributes) {
+        ruleName.setId(id);
+
+        if(result.hasErrors()) {
+            ruleName.setId(id);
+            model.addAttribute("ruleName", ruleName);
+        } else {
+            ruleNameService.createNewRuleName(ruleName);
+            redirectAttributes.addFlashAttribute("success", "Rule successfully updated");
+            return "redirect:/ruleName/list";
+        }
+
+        return "ruleName/update";
     }
 
     @GetMapping("/ruleName/delete/{id}")
-    public String deleteRuleName(@PathVariable("id") Integer id, Model model) {
-        // TODO: Find RuleName by Id and delete the RuleName, return to Rule list
+    public String deleteRuleName(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
+        RuleName ruleName = ruleNameService.getRuleNameById(id);
+
+        if(ruleName != null) {
+            ruleNameService.deleteRuleName(ruleName);
+            redirectAttributes.addFlashAttribute("success", "Rule successfully deleted");
+        }
         return "redirect:/ruleName/list";
     }
 }
