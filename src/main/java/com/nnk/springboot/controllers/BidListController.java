@@ -15,6 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.validation.Valid;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Optional;
 
 
 @Controller
@@ -55,9 +56,9 @@ public class BidListController {
 
     @GetMapping("/bidList/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model, RedirectAttributes redirectAttributes) {
-        BidList bidList = bidListService.getBidListById(id);
+        Optional<BidList> bidList = bidListService.getBidListById(id);
 
-        if(bidList != null) {
+        if(bidList.isPresent()) {
             model.addAttribute("bidList", bidList);
             return "bidList/update";
         } else {
@@ -71,7 +72,7 @@ public class BidListController {
     public String updateBid(@PathVariable("id") Integer id, @Valid BidList bidList,
                             BindingResult result, RedirectAttributes redirectAttributes, Model model) {
         bidList.setBidListId(id);
-        bidList.setCreationDate(bidListService.getBidListById(id).getCreationDate());
+        bidList.setCreationDate(bidListService.getBidListById(id).get().getCreationDate());
         if(result.hasErrors()) {
             bidList.setBidListId(id);
             model.addAttribute("bidList", bidList);
@@ -87,10 +88,10 @@ public class BidListController {
 
     @GetMapping("/bidList/delete/{id}")
     public String deleteBid(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
-        BidList bidList = bidListService.getBidListById(id);
+        Optional<BidList> bidList = bidListService.getBidListById(id);
 
-        if(bidList != null) {
-            bidListService.deleteBidList(bidList);
+        if(bidList.isPresent()) {
+            bidListService.deleteBidList(bidList.get());
             redirectAttributes.addFlashAttribute("success", "BidList successfully deleted");
         }
         return "redirect:/bidList/list";

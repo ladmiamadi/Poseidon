@@ -9,8 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import static org.mockito.Mockito.mock;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -19,19 +23,25 @@ public class CurvePointTests {
 	@Autowired
 	private CurvePointRepository curvePointRepository;
 
+	CurvePoint curvePoint;
+
 	@Test
 	public void curvePointTest() {
-		//CurvePoint curvePoint = new CurvePoint(10, 10d, 30d);
-		CurvePoint curvePoint = null;
+		curvePoint = new CurvePoint();
+		curvePoint.setCreationDate(new Timestamp(new Date().getTime()));
+		curvePoint.setCurveId(10);
+		curvePoint.setTerm(10d);
+		curvePoint.setValue(30d);
+
 		// Save
 		curvePoint = curvePointRepository.save(curvePoint);
 		Assert.assertNotNull(curvePoint.getId());
-		Assert.assertTrue(curvePoint.getCurveId() == 10);
+		Assert.assertEquals(10, (int) curvePoint.getCurveId());
 
 		// Update
 		curvePoint.setCurveId(20);
 		curvePoint = curvePointRepository.save(curvePoint);
-		Assert.assertTrue(curvePoint.getCurveId() == 20);
+		Assert.assertEquals(20, (int) curvePoint.getCurveId());
 
 		// Find
 		List<CurvePoint> listResult = curvePointRepository.findAll();

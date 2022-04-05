@@ -19,10 +19,17 @@ public class RatingTests {
 	@Autowired
 	private RatingRepository ratingRepository;
 
+	Rating rating;
+
 	@Test
 	public void ratingTest() {
 		//Rating rating = new Rating("Moodys Rating", "Sand PRating", "Fitch Rating", 10);
-		Rating rating= null;
+		rating = new Rating();
+		rating.setFitchRating("Fitch Rating");
+		rating.setMoodysRating("Moodys Rating");
+		rating.setOrderNumber(10);
+		rating.setSandPRating("Sand PRating");
+
 		// Save
 		rating = ratingRepository.save(rating);
 		Assert.assertNotNull(rating.getId());

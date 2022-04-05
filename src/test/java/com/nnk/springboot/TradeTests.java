@@ -9,8 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import static org.mockito.Mockito.mock;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -19,19 +23,25 @@ public class TradeTests {
 	@Autowired
 	private TradeRepository tradeRepository;
 
+	Trade trade;
+
 	@Test
 	public void tradeTest() {
-		//Trade trade = new Trade("Trade Account", "Type");
-		Trade trade= null;
+		trade = new Trade();
+		trade.setAccount("Trade Account");
+		trade.setBuyQuantity(10.0d);
+		trade.setCreationDate(new Timestamp(new Date().getTime()));
+		trade.setType("Type");
+
 		// Save
 		trade = tradeRepository.save(trade);
 		Assert.assertNotNull(trade.getTradeId());
-		Assert.assertTrue(trade.getAccount().equals("Trade Account"));
+		Assert.assertEquals("Trade Account", trade.getAccount());
 
 		// Update
 		trade.setAccount("Trade Account Update");
 		trade = tradeRepository.save(trade);
-		Assert.assertTrue(trade.getAccount().equals("Trade Account Update"));
+		Assert.assertEquals("Trade Account Update", trade.getAccount());
 
 		// Find
 		List<Trade> listResult = tradeRepository.findAll();

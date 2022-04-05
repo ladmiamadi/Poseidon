@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,10 +21,17 @@ public class BidTests {
 	@Autowired
 	private BidListRepository bidListRepository;
 
+	BidList bid;
+
 	@Test
 	public void bidListTest() {
-		//BidList bid = new BidList("Account Test", "Type Test", 10d); à revoir
-		BidList bid = null;
+		bid = new BidList();
+		bid.setBidListId(1);
+		bid.setCreationDate(new Timestamp(new Date().getTime()));
+		bid.setBidQuantity(1.0);
+		bid.setAccount("Account Test");
+		bid.setType("Type Test");
+
 		// Save
 		bid = bidListRepository.save(bid);
 		Assert.assertNotNull(bid.getBidListId());

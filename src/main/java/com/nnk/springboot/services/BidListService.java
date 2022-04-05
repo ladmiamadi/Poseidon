@@ -5,6 +5,8 @@ import com.nnk.springboot.repositories.BidListRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class BidListService {
     @Autowired
@@ -18,8 +20,8 @@ public class BidListService {
         return bidListRepository.save(bidList);
     }
 
-    public BidList getBidListById(Integer id) {
-        return bidListRepository.getById(id);
+    public Optional<BidList> getBidListById(Integer id) {
+        return bidListRepository.findById(id);
     }
 
     public void deleteBidList(BidList bidList) {

@@ -85,4 +85,5 @@ public class BidList {
 
     @Column(name = "side")
     private String side;
+
 }
