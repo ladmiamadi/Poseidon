@@ -17,12 +17,21 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Optional;
 
-
+/**
+ * The type Bid list controller.
+ * Created By Ladmia
+ */
 @Controller
 public class BidListController {
+    /**
+     * The Bid list service.
+     */
     @Autowired
     BidListService bidListService;
 
+    /**
+     * Home
+     */
     @RequestMapping("/bidList/list")
     public String home(Model model)
     {
@@ -31,6 +40,11 @@ public class BidListController {
         return "bidList/list";
     }
 
+    /**
+     * display bid form .
+     *
+     * @param bid   the bidList
+     */
     @GetMapping("/bidList/add")
     public String addBidForm(BidList bid, Model model) {
         model.addAttribute("bidList", bid);
@@ -38,6 +52,11 @@ public class BidListController {
         return "bidList/add";
     }
 
+    /**
+     * Validate BidList Form.
+     *
+     * @param bid  the new bidList
+     */
     @PostMapping("/bidList/validate")
     public String validate(@Valid BidList bid, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
         if(result.hasErrors()) {
@@ -54,6 +73,11 @@ public class BidListController {
         return "bidList/add";
     }
 
+    /**
+     * Show update form string.
+     *
+     * @param id the id of the bidList to update
+     */
     @GetMapping("/bidList/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model, RedirectAttributes redirectAttributes) {
         Optional<BidList> bidList = bidListService.getBidListById(id);
@@ -67,7 +91,12 @@ public class BidListController {
         }
     }
 
-
+    /**
+     * Update bidList.
+     *
+     * @param id the id of the bidList to update
+     * @param bidList the bid list to update
+     */
     @PostMapping("/bidList/update/{id}")
     public String updateBid(@PathVariable("id") Integer id, @Valid BidList bidList,
                             BindingResult result, RedirectAttributes redirectAttributes, Model model) {
@@ -86,6 +115,12 @@ public class BidListController {
         return "bidList/update";
     }
 
+    /**
+     * Delete bid string.
+     *
+     * @param id of the bidlist to delete
+     *
+     */
     @GetMapping("/bidList/delete/{id}")
     public String deleteBid(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
         Optional<BidList> bidList = bidListService.getBidListById(id);
