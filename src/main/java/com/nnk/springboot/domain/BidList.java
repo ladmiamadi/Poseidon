@@ -2,11 +2,9 @@ package com.nnk.springboot.domain;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Required;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
-import java.sql.Date;
 import java.sql.Timestamp;
 
 @Entity

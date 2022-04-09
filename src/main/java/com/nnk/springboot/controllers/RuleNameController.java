@@ -1,8 +1,8 @@
 package com.nnk.springboot.controllers;
 
-import com.nnk.springboot.domain.Rating;
 import com.nnk.springboot.domain.RuleName;
 import com.nnk.springboot.services.RuleNameService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.validation.Valid;
 
 @Controller
+@Slf4j
 public class RuleNameController {
     @Autowired
     RuleNameService ruleNameService;
@@ -24,13 +25,14 @@ public class RuleNameController {
     public String home(Model model)
     {
         Iterable<RuleName> ruleNames = ruleNameService.getRuleNameList();
+        log.info("Getting rulNames list="+ ruleNames);
         model.addAttribute("ruleNames", ruleNames);
         return "ruleName/list";
     }
 
     @GetMapping("/ruleName/add")
     public String addRuleForm(RuleName ruleName, Model model) {
-
+        log.info("Displaying form");
         model.addAttribute("ruleName", ruleName);
         return "ruleName/add";
     }
@@ -38,9 +40,11 @@ public class RuleNameController {
     @PostMapping("/ruleName/validate")
     public String validate(@Valid RuleName ruleName, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
         if(result.hasErrors()) {
+            log.error("There ere errors in the form=" + result.getAllErrors());
             model.addAttribute("ruleName", ruleName);
         } else {
             ruleNameService.createNewRuleName(ruleName);
+            log.debug("Creating new RuleName="+ ruleName);
             redirectAttributes.addFlashAttribute("success", "Rule successfully added");
 
             return "redirect:/ruleName/list";
@@ -51,7 +55,7 @@ public class RuleNameController {
     @GetMapping("/ruleName/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
         RuleName ruleName = ruleNameService.getRuleNameById(id);
-
+        log.info("Displaying form");
         model.addAttribute("ruleName", ruleName);
         return "ruleName/update";
     }
@@ -63,9 +67,11 @@ public class RuleNameController {
 
         if(result.hasErrors()) {
             ruleName.setId(id);
+            log.error("There ere errors in the form=" + result.getAllErrors());
             model.addAttribute("ruleName", ruleName);
         } else {
             ruleNameService.createNewRuleName(ruleName);
+            log.debug("Updating RuleName=" + ruleName);
             redirectAttributes.addFlashAttribute("success", "Rule successfully updated");
             return "redirect:/ruleName/list";
         }
@@ -79,6 +85,7 @@ public class RuleNameController {
 
         if(ruleName != null) {
             ruleNameService.deleteRuleName(ruleName);
+            log.info("Deleting ruleName="+ruleName);
             redirectAttributes.addFlashAttribute("success", "Rule successfully deleted");
         }
         return "redirect:/ruleName/list";

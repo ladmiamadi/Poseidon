@@ -2,6 +2,7 @@ package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.BidList;
 import com.nnk.springboot.services.BidListService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,6 +23,7 @@ import java.util.Optional;
  * Created By Ladmia
  */
 @Controller
+@Slf4j
 public class BidListController {
     /**
      * The Bid list service.
@@ -36,6 +38,7 @@ public class BidListController {
     public String home(Model model)
     {
         Iterable<BidList> bidLists= bidListService.getBidLists();
+        log.debug("Getting bidLists: " + bidLists);
         model.addAttribute("bidLists", bidLists);
         return "bidList/list";
     }
@@ -43,10 +46,12 @@ public class BidListController {
     /**
      * display bid form .
      *
-     * @param bid   the bidList
+     * @param bid  the bidList
      */
     @GetMapping("/bidList/add")
     public String addBidForm(BidList bid, Model model) {
+        log.info("display form");
+
         model.addAttribute("bidList", bid);
 
         return "bidList/add";
@@ -60,12 +65,14 @@ public class BidListController {
     @PostMapping("/bidList/validate")
     public String validate(@Valid BidList bid, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
         if(result.hasErrors()) {
+            log.error("There are errors in the form");
             model.addAttribute("bidList", bid);
         } else {
             bid.setBidListDate(new Timestamp(new Date().getTime()));
             bid.setCreationDate(new Timestamp(new Date().getTime()));
-
             bidListService.createNewBidList(bid);
+
+            log.debug("adding bidList to dataBase: "+ bid);
             redirectAttributes.addFlashAttribute("success", "BidList successfully added");
             return "redirect:/bidList/list";
         }
@@ -81,11 +88,13 @@ public class BidListController {
     @GetMapping("/bidList/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model, RedirectAttributes redirectAttributes) {
         Optional<BidList> bidList = bidListService.getBidListById(id);
+        log.info("Looking for"+ bidList +"in database");
 
         if(bidList.isPresent()) {
             model.addAttribute("bidList", bidList);
             return "bidList/update";
         } else {
+            log.error("Invalid id=" + id);
             redirectAttributes.addFlashAttribute("error", "Invalid BidList ID");
             return "redirect:/bidList/list";
         }
@@ -102,12 +111,15 @@ public class BidListController {
                             BindingResult result, RedirectAttributes redirectAttributes, Model model) {
         bidList.setBidListId(id);
         bidList.setCreationDate(bidListService.getBidListById(id).get().getCreationDate());
+
         if(result.hasErrors()) {
+            log.error("There are errors in the form");
             bidList.setBidListId(id);
             model.addAttribute("bidList", bidList);
         } else {
             bidList.setRevisionDate(new Timestamp(new Date().getTime()));
             bidListService.createNewBidList(bidList);
+            log.debug("Adding bidList=" + bidList + "to dataBase");
             redirectAttributes.addFlashAttribute("success", "BidList successfully updated");
             return "redirect:/bidList/list";
         }
@@ -127,6 +139,7 @@ public class BidListController {
 
         if(bidList.isPresent()) {
             bidListService.deleteBidList(bidList.get());
+            log.info("deleting bidList id=" + id);
             redirectAttributes.addFlashAttribute("success", "BidList successfully deleted");
         }
         return "redirect:/bidList/list";

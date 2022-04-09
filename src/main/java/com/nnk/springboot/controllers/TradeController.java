@@ -2,6 +2,7 @@ package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.Trade;
 import com.nnk.springboot.services.TradeService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +18,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 @Controller
+@Slf4j
 public class TradeController {
     @Autowired
     TradeService tradeService;
@@ -25,12 +27,14 @@ public class TradeController {
     public String home(Model model)
     {
         Iterable<Trade> trades = tradeService.getTradeList();
+        log.info("Getting trades list="+trades);
         model.addAttribute("trades", trades);
         return "trade/list";
     }
 
     @GetMapping("/trade/add")
     public String addUser(Trade trade, Model model) {
+        log.info("Displaying form");
         model.addAttribute("trade", trade);
         return "trade/add";
     }
@@ -38,10 +42,11 @@ public class TradeController {
     @PostMapping("/trade/validate")
     public String validate(@Valid Trade trade, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
         if(result.hasErrors()) {
+            log.error("There ere errors in the form=" + result.getAllErrors());
             model.addAttribute("trade", trade);
         } else {
             trade.setCreationDate(new Timestamp(new Date().getTime()));
-
+            log.debug("Creating new Trade="+ trade);
             tradeService.createNewTrade(trade);
             redirectAttributes.addFlashAttribute("success", "Trade successfully added");
             return "redirect:/trade/list";
@@ -55,6 +60,7 @@ public class TradeController {
         Trade trade = tradeService.getTradeById(id);
 
         if(trade != null) {
+            log.info("Displaying form");
             model.addAttribute("trade", trade);
             return "trade/update";
         } else {
@@ -69,11 +75,13 @@ public class TradeController {
         trade.setTradeId(id);
         trade.setCreationDate(tradeService.getTradeById(id).getCreationDate());
         if(result.hasErrors()) {
+            log.error("There ere errors in the form=" + result.getAllErrors());
             trade.setTradeId(id);
             model.addAttribute("trade", trade);
         } else {
             trade.setRevisionDate(new Timestamp(new Date().getTime()));
             tradeService.createNewTrade(trade);
+            log.debug("Updating trade=" + trade);
             redirectAttributes.addFlashAttribute("success", "Trade successfully updated");
             return "redirect:/trade/list";
         }
@@ -87,6 +95,7 @@ public class TradeController {
 
         if(trade != null) {
             tradeService.deleteTrade(trade);
+            log.info("Deleting trade=" + trade);
             redirectAttributes.addFlashAttribute("success", "Trade successfully deleted");
         }
         return "redirect:/trade/list";

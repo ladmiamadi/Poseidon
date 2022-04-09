@@ -2,6 +2,7 @@ package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.Rating;
 import com.nnk.springboot.services.RatingService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.validation.Valid;
 
 @Controller
+@Slf4j
 public class RatingController {
     @Autowired
     RatingService ratingService;
@@ -23,13 +25,14 @@ public class RatingController {
     public String home(Model model)
     {
         Iterable<Rating> ratings = ratingService.getRatingList();
+        log.info("Getting ratings list="+ ratings);
         model.addAttribute("ratings", ratings);
         return "rating/list";
     }
 
     @GetMapping("/rating/add")
     public String addRatingForm(Rating rating, Model model) {
-
+        log.info("Displaying form");
         model.addAttribute("rating", rating);
         return "rating/add";
     }
@@ -37,9 +40,11 @@ public class RatingController {
     @PostMapping("/rating/validate")
     public String validate(@Valid Rating rating, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
         if(result.hasErrors()) {
+            log.error("There ere errors in the form=" + result.getAllErrors());
             model.addAttribute("rating", rating);
         } else {
             ratingService.createNewRating(rating);
+            log.debug("Creating new rating="+ rating);
             redirectAttributes.addFlashAttribute("success", "Rating successfully added");
 
             return "redirect:/rating/list";
@@ -50,7 +55,7 @@ public class RatingController {
     @GetMapping("/rating/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
         Rating rating = ratingService.getRatingById(id);
-
+        log.info("Displaying form");
         model.addAttribute("rating", rating);
         return "rating/update";
     }
@@ -62,9 +67,11 @@ public class RatingController {
 
         if(result.hasErrors()) {
             rating.setId(id);
+            log.error("There ere errors in the form=" + result.getAllErrors());
             model.addAttribute("rating", rating);
         } else {
             ratingService.createNewRating(rating);
+            log.info("Updating rating="+ rating);
             redirectAttributes.addFlashAttribute("success", "Rating successfully updated");
             return "redirect:/rating/list";
         }
@@ -78,6 +85,7 @@ public class RatingController {
 
         if(rating != null) {
             ratingService.deleteRating(rating);
+            log.info("Deleting rating from database: " + rating);
             redirectAttributes.addFlashAttribute("success", "Rating successfully deleted");
         }
         return "redirect:/rating/list";
