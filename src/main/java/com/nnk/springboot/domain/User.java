@@ -5,6 +5,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Past;
+import javax.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "users")
@@ -21,6 +23,8 @@ public class User {
     private String username;
 
     @Column(name = "password")
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>.]).{8,}$",
+            message = "Password must contains minimum 8 characters, at least 1 uppercase letter, 1 lowercase letter, 1 number and 1 special character")
     @NotBlank(message = "Password is mandatory")
     private String password;
 
