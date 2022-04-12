@@ -6,6 +6,8 @@ import com.nnk.springboot.repositories.RatingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class RatingService {
     @Autowired
@@ -19,8 +21,8 @@ public class RatingService {
         return ratingRepository.save(rating);
     }
 
-    public Rating getRatingById(Integer id) {
-        return ratingRepository.getById(id);
+    public Optional<Rating> getRatingById(Integer id) {
+        return ratingRepository.findById(id);
     }
 
     public void deleteRating(Rating rating) {

@@ -8,13 +8,8 @@ import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import com.nnk.springboot.domain.Rating;
 import com.nnk.springboot.domain.RuleName;
 import com.nnk.springboot.repositories.RuleNameRepository;
-
-import java.util.ArrayList;
-
 import java.util.Collection;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -70,11 +65,11 @@ class RuleNameServiceTest {
 
     @Test
     void testGetRuleNameById() {
-        when(ruleNameRepository.getById(1)).thenReturn(ruleName);
+        when(ruleNameService.createNewRuleName(ruleName)).thenReturn(ruleName);
 
-       assertSame(ruleName, ruleNameService.getRuleNameById(1));
+       ruleNameService.getRuleNameById(ruleName.getId());
 
-        verify(ruleNameRepository).getById(ruleName.getId());
+        verify(ruleNameRepository).findById(ruleName.getId());
     }
 
     @Test

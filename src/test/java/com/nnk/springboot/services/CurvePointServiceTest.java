@@ -1,7 +1,6 @@
 package com.nnk.springboot.services;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.any;
@@ -9,14 +8,10 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import com.nnk.springboot.domain.BidList;
 import com.nnk.springboot.domain.CurvePoint;
-import com.nnk.springboot.domain.Trade;
 import com.nnk.springboot.repositories.CurvePointRepository;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Collection;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +32,7 @@ class CurvePointServiceTest {
     @Autowired
     private CurvePointService curvePointService;
 
-    CurvePoint curvePoint;
+    private  CurvePoint curvePoint;
 
     @BeforeEach
     void setUp() {
@@ -71,11 +66,11 @@ class CurvePointServiceTest {
 
     @Test
     void testGetCurvePointById() {
-        when(curvePointRepository.getById(1)).thenReturn(curvePoint);
+        when(curvePointService.createNewCurvePoint(curvePoint)).thenReturn(curvePoint);
 
-        assertSame(curvePoint, curvePointService.getCurvePointById(curvePoint.getId()));
+        curvePointService.getCurvePointById(curvePoint.getId());
 
-        verify(curvePointRepository).getById((Integer) any());
+        verify(curvePointRepository).findById(curvePoint.getId());
     }
 
     @Test

@@ -14,7 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
+/**
+ * The type Rule name controller.
+ * @author ladmia
+ */
 @Controller
 @Slf4j
 public class RuleNameController {
@@ -53,11 +58,18 @@ public class RuleNameController {
     }
 
     @GetMapping("/ruleName/update/{id}")
-    public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
-        RuleName ruleName = ruleNameService.getRuleNameById(id);
-        log.info("Displaying form");
-        model.addAttribute("ruleName", ruleName);
-        return "ruleName/update";
+    public String showUpdateForm(@PathVariable("id") Integer id, Model model, RedirectAttributes redirectAttributes) {
+        Optional<RuleName> ruleName = ruleNameService.getRuleNameById(id);
+        log.info("Getting ruleName="+ ruleName);
+
+        if(ruleName.isPresent()) {
+            model.addAttribute("ruleName", ruleName.get());
+            return "ruleName/update";
+        } else {
+            log.error("Invalid ruleName id=" + id);
+            redirectAttributes.addFlashAttribute("error", "Invalid ruleName ID");
+            return "redirect:/ruleName/list";
+        }
     }
 
     @PostMapping("/ruleName/update/{id}")
@@ -81,13 +93,17 @@ public class RuleNameController {
 
     @GetMapping("/ruleName/delete/{id}")
     public String deleteRuleName(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
-        RuleName ruleName = ruleNameService.getRuleNameById(id);
+        Optional<RuleName> ruleName = ruleNameService.getRuleNameById(id);
 
-        if(ruleName != null) {
-            ruleNameService.deleteRuleName(ruleName);
+        if(ruleName.isPresent()) {
+            ruleNameService.deleteRuleName(ruleName.get());
             log.info("Deleting ruleName="+ruleName);
             redirectAttributes.addFlashAttribute("success", "Rule successfully deleted");
+        } else {
+            log.error("Invalid ruleName id=" + id);
+            redirectAttributes.addFlashAttribute("error", "Invalid ruleName ID");
         }
+
         return "redirect:/ruleName/list";
     }
 }

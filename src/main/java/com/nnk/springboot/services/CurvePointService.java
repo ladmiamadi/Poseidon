@@ -5,6 +5,8 @@ import com.nnk.springboot.repositories.CurvePointRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class CurvePointService {
     @Autowired
@@ -18,8 +20,8 @@ public class CurvePointService {
         return curvePointRepository.save(curvePoint);
     }
 
-    public CurvePoint getCurvePointById(Integer id) {
-        return curvePointRepository.getById(id);
+    public Optional<CurvePoint> getCurvePointById(Integer id) {
+        return curvePointRepository.findById(id);
     }
 
     public void deleteCurvePoint(CurvePoint curvePoint) {

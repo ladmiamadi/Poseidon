@@ -5,6 +5,8 @@ import com.nnk.springboot.repositories.RuleNameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class RuleNameService {
     @Autowired
@@ -18,8 +20,8 @@ public class RuleNameService {
         return ruleNameRepository.save(ruleName);
     }
 
-    public RuleName getRuleNameById(Integer id) {
-        return ruleNameRepository.getById(id);
+    public Optional<RuleName> getRuleNameById(Integer id) {
+        return ruleNameRepository.findById(id);
     }
 
     public void deleteRuleName(RuleName ruleName) {

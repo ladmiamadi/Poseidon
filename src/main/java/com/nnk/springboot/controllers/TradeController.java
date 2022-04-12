@@ -16,7 +16,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.validation.Valid;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Optional;
 
+/**
+ *  trade controller
+ * @author ladmia
+ */
 @Controller
 @Slf4j
 public class TradeController {
@@ -57,13 +62,14 @@ public class TradeController {
 
     @GetMapping("/trade/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model, RedirectAttributes redirectAttributes) {
-        Trade trade = tradeService.getTradeById(id);
+        Optional<Trade> trade = tradeService.getTradeById(id);
+        log.info("Getting trade="+ trade);
 
-        if(trade != null) {
-            log.info("Displaying form");
-            model.addAttribute("trade", trade);
+        if(trade.isPresent()) {
+            model.addAttribute("trade", trade.get());
             return "trade/update";
         } else {
+            log.error("Invalid trade id=" + id);
             redirectAttributes.addFlashAttribute("error", "Invalid trade ID");
             return "redirect:/trade/list";
         }
@@ -73,7 +79,7 @@ public class TradeController {
     public String updateTrade(@PathVariable("id") Integer id, @Valid Trade trade,
                              BindingResult result, Model model, RedirectAttributes redirectAttributes) {
         trade.setTradeId(id);
-        trade.setCreationDate(tradeService.getTradeById(id).getCreationDate());
+        trade.setCreationDate(tradeService.getTradeById(id).get().getCreationDate());
         if(result.hasErrors()) {
             log.error("There ere errors in the form=" + result.getAllErrors());
             trade.setTradeId(id);
@@ -91,13 +97,17 @@ public class TradeController {
 
     @GetMapping("/trade/delete/{id}")
     public String deleteTrade(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
-        Trade trade = tradeService.getTradeById(id);
+        Optional<Trade> trade = tradeService.getTradeById(id);
 
-        if(trade != null) {
-            tradeService.deleteTrade(trade);
+        if(trade.isPresent()) {
+            tradeService.deleteTrade(trade.get());
             log.info("Deleting trade=" + trade);
             redirectAttributes.addFlashAttribute("success", "Trade successfully deleted");
+        } else {
+            log.error("Invalid trade id=" + id);
+            redirectAttributes.addFlashAttribute("error", "Invalid trade ID");
         }
+
         return "redirect:/trade/list";
     }
 }

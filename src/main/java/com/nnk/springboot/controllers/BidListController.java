@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import javax.validation.Valid;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -20,7 +19,7 @@ import java.util.Optional;
 
 /**
  * The type Bid list controller.
- * Created By Ladmia
+ * @author ladmia
  */
 @Controller
 @Slf4j
@@ -88,13 +87,13 @@ public class BidListController {
     @GetMapping("/bidList/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model, RedirectAttributes redirectAttributes) {
         Optional<BidList> bidList = bidListService.getBidListById(id);
-        log.info("Looking for"+ bidList +"in database");
+        log.info("Getting BidList="+ bidList);
 
         if(bidList.isPresent()) {
-            model.addAttribute("bidList", bidList);
+            model.addAttribute("bidList", bidList.get());
             return "bidList/update";
         } else {
-            log.error("Invalid id=" + id);
+            log.error("Invalid bidList id=" + id);
             redirectAttributes.addFlashAttribute("error", "Invalid BidList ID");
             return "redirect:/bidList/list";
         }
@@ -119,7 +118,7 @@ public class BidListController {
         } else {
             bidList.setRevisionDate(new Timestamp(new Date().getTime()));
             bidListService.createNewBidList(bidList);
-            log.debug("Adding bidList=" + bidList + "to dataBase");
+            log.debug("Updating bidList=" + bidList);
             redirectAttributes.addFlashAttribute("success", "BidList successfully updated");
             return "redirect:/bidList/list";
         }
@@ -141,7 +140,11 @@ public class BidListController {
             bidListService.deleteBidList(bidList.get());
             log.info("deleting bidList id=" + id);
             redirectAttributes.addFlashAttribute("success", "BidList successfully deleted");
+        } else {
+            log.error("Invalid bidList id=" + id);
+            redirectAttributes.addFlashAttribute("error", "Invalid BidList ID");
         }
+
         return "redirect:/bidList/list";
     }
 }

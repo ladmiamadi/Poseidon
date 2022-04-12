@@ -16,9 +16,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.validation.Valid;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Optional;
 
 /**
  * The CurvePoint controller.
+ * @author ladmia
  */
 @Controller
 @Slf4j
@@ -61,19 +63,25 @@ public class CurveController {
     }
 
     @GetMapping("/curvePoint/update/{id}")
-    public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
-        CurvePoint curvePoint = curvePointService.getCurvePointById(id);
-        log.info("Displaying form");
-        model.addAttribute("curvePoint", curvePoint);
+    public String showUpdateForm(@PathVariable("id") Integer id, Model model, RedirectAttributes redirectAttributes) {
+        Optional<CurvePoint> curvePoint = curvePointService.getCurvePointById(id);
+        log.info("Getting CurvePoint="+ curvePoint);
 
-        return "curvePoint/update";
+        if(curvePoint.isPresent()) {
+            model.addAttribute("curvePoint", curvePoint.get());
+            return "curvePoint/update";
+        } else {
+            log.error("Invalid curvePoint id=" + id);
+            redirectAttributes.addFlashAttribute("error", "Invalid curvePoint ID");
+            return "redirect:/curvePoint/list";
+        }
     }
 
     @PostMapping("/curvePoint/update/{id}")
     public String updateCurvePoint(@PathVariable("id") Integer id, @Valid CurvePoint curvePoint,
                              BindingResult result, Model model, RedirectAttributes redirectAttributes) {
         curvePoint.setCurveId(id);
-        curvePoint.setCreationDate(curvePointService.getCurvePointById(id).getCreationDate());
+        curvePoint.setCreationDate(curvePointService.getCurvePointById(id).get().getCreationDate());
 
         if(result.hasErrors()) {
             log.error("There are errors in the form=" + result.getAllErrors());
@@ -92,13 +100,17 @@ public class CurveController {
 
     @GetMapping("/curvePoint/delete/{id}")
     public String deleteCurvePoint(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
-        CurvePoint curvePoint = curvePointService.getCurvePointById(id);
+        Optional<CurvePoint> curvePoint = curvePointService.getCurvePointById(id);
 
-        if(curvePoint != null) {
-            curvePointService.deleteCurvePoint(curvePoint);
+        if(curvePoint.isPresent()) {
+            curvePointService.deleteCurvePoint(curvePoint.get());
             log.info("Deleting curvePoint=" + curvePoint);
             redirectAttributes.addFlashAttribute("success", "Curve Point successfully deleted");
+        } else {
+            log.error("Invalid curvePoint id=" + id);
+            redirectAttributes.addFlashAttribute("error", "Invalid curvePoint ID");
         }
+
         return "redirect:/curvePoint/list";
     }
 }

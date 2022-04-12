@@ -5,6 +5,8 @@ import com.nnk.springboot.repositories.TradeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class TradeService {
     @Autowired
@@ -18,8 +20,8 @@ public class TradeService {
         return tradeRepository.save(trade);
     }
 
-    public Trade getTradeById(Integer id) {
-        return tradeRepository.getById(id);
+    public Optional<Trade> getTradeById(Integer id) {
+        return tradeRepository.findById(id);
     }
 
     public void deleteTrade(Trade trade) {

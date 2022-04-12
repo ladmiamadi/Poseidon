@@ -1,22 +1,11 @@
 package com.nnk.springboot.services;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import com.nnk.springboot.domain.CurvePoint;
 import com.nnk.springboot.domain.Rating;
 import com.nnk.springboot.repositories.RatingRepository;
-
-import java.util.ArrayList;
-
-import java.util.Collection;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -68,9 +57,11 @@ class RatingServiceTest {
 
     @Test
     void testGetRatingById() {
-        when(ratingRepository.save(rating)).thenReturn(rating);
+        when(ratingService.createNewRating(rating)).thenReturn(rating);
+
         ratingService.getRatingById(rating.getId());
-        verify(ratingRepository).getById((Integer) any());
+
+        verify(ratingRepository).findById(rating.getId());
     }
 
     @Test

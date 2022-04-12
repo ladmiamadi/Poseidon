@@ -1,8 +1,12 @@
 package com.nnk.springboot.configuration;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.server.ErrorPage;
+import org.springframework.boot.web.server.WebServerFactoryCustomizer;
+import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -42,6 +46,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin()
                 .defaultSuccessUrl("/bidList/list", true)
+                .and()
+                .exceptionHandling().accessDeniedPage("/app/error")
                 .and()
                 .oauth2Login().defaultSuccessUrl("/bidList/list", true)
                 .and()

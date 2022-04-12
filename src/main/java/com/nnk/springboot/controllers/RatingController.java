@@ -14,7 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
+/**
+ * The type Rating controller.
+ * @author ladmia
+ */
 @Controller
 @Slf4j
 public class RatingController {
@@ -53,11 +58,18 @@ public class RatingController {
     }
 
     @GetMapping("/rating/update/{id}")
-    public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
-        Rating rating = ratingService.getRatingById(id);
-        log.info("Displaying form");
-        model.addAttribute("rating", rating);
-        return "rating/update";
+    public String showUpdateForm(@PathVariable("id") Integer id, Model model, RedirectAttributes redirectAttributes) {
+        Optional<Rating> rating = ratingService.getRatingById(id);
+        log.info("Getting Rating="+ rating);
+
+        if(rating.isPresent()) {
+            model.addAttribute("rating", rating.get());
+            return "rating/update";
+        } else {
+            log.error("Invalid rating id=" + id);
+            redirectAttributes.addFlashAttribute("error", "Invalid rating ID");
+            return "redirect:/rating/list";
+        }
     }
 
     @PostMapping("/rating/update/{id}")
@@ -81,13 +93,17 @@ public class RatingController {
 
     @GetMapping("/rating/delete/{id}")
     public String deleteRating(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
-        Rating rating = ratingService.getRatingById(id);
+        Optional<Rating> rating = ratingService.getRatingById(id);
 
-        if(rating != null) {
-            ratingService.deleteRating(rating);
+        if(rating.isPresent()) {
+            ratingService.deleteRating(rating.get());
             log.info("Deleting rating from database: " + rating);
             redirectAttributes.addFlashAttribute("success", "Rating successfully deleted");
+        }  else {
+            log.error("Invalid rating id=" + id);
+            redirectAttributes.addFlashAttribute("error", "Invalid rating ID");
         }
+
         return "redirect:/rating/list";
     }
 }

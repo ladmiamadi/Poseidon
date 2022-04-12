@@ -9,11 +9,8 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import com.nnk.springboot.domain.RuleName;
 import com.nnk.springboot.domain.Trade;
 import com.nnk.springboot.repositories.TradeRepository;
-
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -71,9 +68,10 @@ class TradeServiceTest {
 
     @Test
     void testGetTradeById() {
-        when(tradeRepository.getById((Integer) any())).thenReturn(trade);
-        assertSame(trade, tradeService.getTradeById(1));
-        verify(tradeRepository).getById((Integer) any());
+        when(tradeService.createNewTrade(trade)).thenReturn(trade);
+
+        tradeService.getTradeById(trade.getTradeId());
+        verify(tradeRepository).findById(trade.getTradeId());
     }
 
     @Test
